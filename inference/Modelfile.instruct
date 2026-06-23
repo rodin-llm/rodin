@@ -1,0 +1,25 @@
+# Modelfile.instruct — RODIN-1B-Instruct (ChatML)
+# Usage :
+#   ollama create rodin-1b-instruct -f Modelfile.instruct
+#   ollama run rodin-1b-instruct
+#
+# Adapte FROM au quant voulu (Q4_K_M par defaut, leger ; Q8_0 = meilleure qualite).
+
+FROM ./gguf/rodin-1b-instruct-Q4_K_M.gguf
+
+TEMPLATE """{{ if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ .Response }}<|im_end|>
+"""
+
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|im_start|>"
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER num_ctx 2048
+
+# Persona optionnelle (le suivi d'un system prompt est aleatoire sur un 1B).
+# SYSTEM """Tu es RODIN, un modele de langage francais."""

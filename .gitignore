@@ -1,0 +1,71 @@
+# =============================================================
+# RODIN — .gitignore
+# Empeche de pousser les gros artefacts et les secrets.
+# =============================================================
+
+# --- Poids & modeles (vivent sur HuggingFace, jamais sur git) ---
+*.pt
+*.bin
+*.safetensors
+*.gguf
+*.ckpt
+*.pth
+
+# --- Donnees (corpus, shards, datasets intermediaires) ---
+*.jsonl
+*.zst
+*.parquet
+*.arrow
+blend/
+blend_pretest/
+cleaned/
+deduped/
+tokenized/
+raw/
+checkpoints/
+runs/
+weights/
+eval/
+
+# --- Tokenizer entraine (regenerable, lourd) ---
+# (garde le code qui l'entraine, pas le binaire)
+*.model
+*.vocab
+
+# --- Secrets / environnement ---
+.env
+.env.*
+*.key
+*.pem
+id_rsa*
+*_token*
+secrets*
+.huggingface/
+.hf_token
+
+# --- Caches Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# --- OS / editeurs ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# --- Logs & sorties locales ---
+*.log
+out/
+output/
+tmp/
+
+# --- Outils internes (ne jamais publier) ---
+scan_caviardage.sh
+SHA256SUMS.txt
+MANIFEST.md

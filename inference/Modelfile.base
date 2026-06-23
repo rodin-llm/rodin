@@ -1,0 +1,15 @@
+# Modelfile.base — RODIN-1B (modele BASE, completion brute)
+# Le modele base ne suit PAS d'instructions : c'est un completeur de texte.
+# Pas de template ChatML, pas de stop ChatML. On laisse couler la generation.
+#
+# Usage :
+#   ollama create rodin-1b-base -f Modelfile.base
+#   ollama run rodin-1b-base "La France est"
+
+FROM ./gguf/rodin-1b-base-Q4_K_M.gguf
+
+TEMPLATE """{{ .Prompt }}"""
+
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER num_ctx 2048
