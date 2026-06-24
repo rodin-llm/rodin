@@ -1,0 +1,52 @@
+# ============================================================================
+# RODIN — rodin-watchdog.service  (systemd unit, à poser sur le VPS)
+# ----------------------------------------------------------------------------
+# Installation :
+#   sudo cp rodin-watchdog.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable rodin-watchdog        # démarrage au boot du VPS
+#   sudo systemctl start  rodin-watchdog
+#
+# Suivi des logs :
+#   journalctl -u rodin-watchdog -f             # temps réel
+#   journalctl -u rodin-watchdog --since "1 hour ago"
+#
+# Arrêt / redémarrage :
+#   sudo systemctl stop    rodin-watchdog
+#   sudo systemctl restart rodin-watchdog
+#
+# NB : les credentials Verda sont lus depuis le .env (EnvironmentFile ci-dessous).
+#      Format .env (PAS de guillemets, cf. incident bash de la session build) :
+#          VERDA_CLIENT_ID=xxxxxxxx
+#          VERDA_CLIENT_SECRET=yyyyyyyy
+#      chmod 600 /root/rodin-ctl/.env
+# ============================================================================
+[Unit]
+Description=RODIN watchdog (surveille l'instance B200 spot et redeploie apres kick)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/rodin-ctl
+EnvironmentFile=/root/rodin-ctl/.env
+ExecStart=/root/rodin-ctl/.venv/bin/python -u /root/rodin-ctl/03_watchdog.py run
+
+# Robustesse : si le watchdog crashe pour une raison quelconque, systemd le
+# relance. Un watchdog mort = un run non surveille = risque de kick non rattrape.
+Restart=always
+RestartSec=10
+
+# Arret propre : SIGTERM -> le watchdog finit son tour puis sort (gere par le
+# handler signal du script). On laisse 30s avant le SIGKILL.
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Journalisation vers journald (journalctl -u rodin-watchdog).
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=rodin-watchdog
+
+[Install]
+WantedBy=multi-user.target

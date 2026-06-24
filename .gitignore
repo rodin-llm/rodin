@@ -69,3 +69,6 @@ tmp/
 scan_caviardage.sh
 SHA256SUMS.txt
 MANIFEST.md
+current_instance.json
+golden_volume.json
+startup_script.json
